@@ -22,6 +22,37 @@ with open(file_to_load) as financial_data:
     header = next(reader)
 
     # Extract first row to avoid appending to net_change_list
+    first_row = next(reader)   
+    total_months += 1
+    total_net += int(first_row[1])
+    prev_net = int(first_row[1])
+    greatest_increase = ["", 0]
+    greatest_decrease = ["", 0]
+    net_change_list = []    
+    # Loop through the data to calculate changes in net profit  
+    for row in reader:
+        total_months += 1
+        total_net += int(row[1])
+        net_change = int(row[1]) - prev_net
+        prev_net = int(row[1])
+        net_change_list += [net_change]
+        if net_change > greatest_increase[1]:
+            greatest_increase[0] = row[0]
+            greatest_increase[1] = net_change
+        if net_change < greatest_decrease[1]:
+            greatest_decrease[0] = row[0]
+            greatest_decrease[1] = net_change
+    net_monthly_avg = sum(net_change_list) / len(net_change_list)
+    output = (
+        f"\nFinancial Analysis\n"
+        f"----------------------------\n"
+        f"Total Months: {total_months}\n"
+        f"Total: ${total_net}\n"
+        f"Average  Change: ${net_monthly_avg:.2f}\n"
+        f"Greatest Increase in Profits: {greatest_increase[0]} (${greatest_increase[1]})\n"
+        f"Greatest Decrease in Profits: {greatest_decrease[0]} (${greatest_decrease[1]})\n"
+    )                  
+    print(output)   
 
 
     # Track the total and net change
